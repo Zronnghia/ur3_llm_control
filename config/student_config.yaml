@@ -1,0 +1,30 @@
+# >>> KIỂM TRA LẠI THÔNG TIN CỦA BẠN TRƯỚC KHI DEMO <<<
+student_name: "Le Trong Nghia"
+student_id: "23020754"
+
+# P = (hai chữ số cuối MSSV) mod 6  -> được TÍNH TỰ ĐỘNG trong code
+# (ur3_llm_control/student_task.py), không cần và không nên điền tay.
+# Với 23020754: P = 54 mod 6 = 0 -> Zone A = red, Zone B = yellow, Zone C = blue.
+
+llm:
+  # 9Router: endpoint OpenAI-compatible, chạy local ở cổng 20128
+  base_url: "http://localhost:20128/v1"
+
+  # API key CỦA 9ROUTER (dashboard > Endpoint), KHÔNG phải key Google.
+  # Khuyến nghị để trống và dùng biến môi trường NINEROUTER_API_KEY
+  # (để không lộ key khi nộp bài / đẩy lên git).
+  api_key: ""
+
+  # Model Gemini qua provider "Gemini" (API key AI Studio) trong 9Router.
+  # Tên có dạng <alias provider>/<model>. Một số lựa chọn:
+  #   gemini/gemini-2.5-flash       (mặc định: nhanh, free tier AI Studio)
+  #   gemini/gemini-2.5-pro         (mạnh hơn, chậm hơn, quota free thấp hơn)
+  #   gemini/gemini-2.5-flash-lite  (nhanh nhất, kém hơn ở câu lệnh nhiều bước)
+  #   gc/gemini-2.5-flash           (provider "Gemini CLI" = đăng nhập OAuth tài khoản Google;
+  #                                  9Router cảnh báo có rủi ro bị hạn chế/khoá tài khoản)
+  # Biến môi trường NINEROUTER_MODEL ghi đè giá trị này.
+  model: "oc/muse-spark-1.2-contributor-free"
+
+  temperature: 0.0
+  timeout_s: 90            # Gemini 2.5 có bước "thinking" nên đôi khi mất 10-30 s
+  max_attempts: 2          # nếu kế hoạch bị validator từ chối, gửi lỗi lại cho LLM thêm 1 lần

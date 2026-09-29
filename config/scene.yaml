@@ -1,0 +1,56 @@
+# ---------------------------------------------------------------------------
+# Scene description = SINGLE SOURCE OF TRUTH for
+#   * the Gazebo world (generated at launch time),
+#   * the MoveIt 2 planning scene (collision objects),
+#   * the robot skills (object / zone coordinates),
+#   * the LLM prompt (list of valid objects and zones).
+# All coordinates are in the `world` frame (= UR base_link, robot at origin),
+# metres.  The robot faces +x.
+# Reachability of every pose below is verified offline by:
+#   ros2 run ur3_llm_control check_scene      (or: python3 -m ur3_llm_control.check_scene)
+# ---------------------------------------------------------------------------
+frame_id: world
+ur_type: ur3e                # ur3 | ur3e (must match the launch argument)
+planning_group: ur_manipulator
+ee_link: tool0
+
+table:
+  center: [0.30, 0.0]        # x, y of table centre
+  size: [0.34, 0.80]         # x, y extent
+  height: 0.10               # z of the table top (low workbench next to the robot base)
+
+cube_size: 0.04
+
+objects:                     # initial positions (x, y) on the table; z is derived
+  red_cube:    {color: red,    xy: [0.22, -0.16], rgba: [0.9, 0.1, 0.1, 1.0]}
+  yellow_cube: {color: yellow, xy: [0.22,  0.00], rgba: [0.95, 0.85, 0.1, 1.0]}
+  blue_cube:   {color: blue,   xy: [0.22,  0.16], rgba: [0.1, 0.3, 0.9, 1.0]}
+
+zones:                       # place zones (square markers on the table)
+  zone_a: {label: "Zone A", xy: [0.38,  0.16], size: 0.09, rgba: [0.2, 0.8, 0.2, 0.6]}
+  zone_b: {label: "Zone B", xy: [0.38,  0.00], size: 0.09, rgba: [0.9, 0.5, 0.1, 0.6]}
+  zone_c: {label: "Zone C", xy: [0.38, -0.16], size: 0.09, rgba: [0.6, 0.2, 0.8, 0.6]}
+
+# Temporary slots used automatically when a target zone is occupied.
+# They are NOT offered to the LLM (it can only use zone_a/b/c).
+buffer_slots:
+  buffer_1: {xy: [0.29, -0.31]}
+  buffer_2: {xy: [0.29,  0.31]}
+
+motion:
+  home_joints: [0.0, -1.57, 1.57, -1.57, -1.57, 0.0]   # tool pointing down above the table
+  approach_height: 0.12      # pre-grasp / pre-place height above the contact pose [m]
+  grasp_gap: 0.008           # distance between tool0 and the cube top when "gripping"
+  place_clearance: 0.003     # cube bottom above the table when released
+  velocity_scaling: 0.2
+  acceleration_scaling: 0.2
+  planning_time: 5.0
+  planning_attempts: 10
+  cartesian_step: 0.005
+  min_cartesian_fraction: 0.98
+  orientation_tolerance: 0.05      # rad, roll/pitch of the tool
+  position_tolerance: 0.003        # m
+  # Negative collision padding for the cube while it is held: a cube resting on
+  # the table touches it with 0 clearance, and MoveIt would report that contact
+  # as a collision (see moveit_backend.attach).  Must exceed position_tolerance.
+  attached_shrink: 0.008           # m, subtracted from the cube's collision box
