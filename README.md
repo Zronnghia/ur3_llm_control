@@ -217,7 +217,7 @@ TASK REJECTED (nothing was executed)
 | Unit + integration (68 test) | `python3 -m pytest test -q` | bảng P, tầm với UR3/UR3e, world SDF, 22 kế hoạch sai phải bị từ chối, trích JSON (markdown/`<think>`), retry, sắp xếp lại/ô tạm/hoán đổi, pipeline cơ bản + nâng cao, lỗi planning dừng đúng chỗ, HTTP client với 9Router giả (200/401/không kết nối/bỏ qua proxy), sàn trong planning scene không chạm đế, tham số include MoveIt |
 | Tổng hợp offline | `./tools/run_all_checks.sh` | cú pháp, pytest, check_scene, world XML, cấu hình LLM, (nếu có ROS) các package phụ thuộc |
 | URDF thật | `python3 tools/urdf_check/verify_urdf_fk.py --from-ros` | so FK `world → tool0` với URDF dựng bằng xacro trên 500 cấu hình |
-| LLM thật, robot giả | `ros2 run ur3_llm_control offline_cli "..."` | gọi 9Router/Gemini thật, robot là IK giả lập |
+| LLM thật, robot giả | `ros2 run ur3_llm_control offline_cli "..."` | gọi 9Router thật, robot là IK giả lập |
 
 Đã kiểm tra thêm khi sửa lỗi: chạy `sim.launch.py` và `llm_robot.launch.py` bằng thư viện
 `launch` của Humble (chỉ giả lập `launch_ros.Node`) với `ur_description`, `ur_moveit_config`,
